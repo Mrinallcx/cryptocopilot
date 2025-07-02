@@ -37,6 +37,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { XLogo, InstagramLogoIcon } from '@phosphor-icons/react';
 import Link from 'next/link';
 import { User } from '@/lib/db/schema';
+import { ShieldAlert, DollarSign } from 'lucide-react';
 
 const VercelIcon = ({ size = 16 }: { size: number }) => {
   return (
@@ -110,137 +111,31 @@ const UserProfile = memo(
           <Tooltip>
             <TooltipTrigger asChild>
               <DropdownMenuTrigger asChild>
-                {isAuthenticated ? (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={cn('p-0! m-0!', signingOut && 'animate-pulse', className)}
-                    asChild
-                  >
-                    <Avatar className="size-7">
-                      <AvatarImage
-                        src={currentUser?.image ?? ''}
-                        alt={currentUser?.name ?? ''}
-                        className="rounded-full"
-                      />
-                      <AvatarFallback className="rounded-full text-sm">{currentUser?.name?.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                ) : (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={cn('p-0! m-0! hover:bg-transparent!', signingIn && 'animate-pulse', className)}
-                  >
-                    <UserCircle className="size-6" />
-                  </Button>
-                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={cn('p-0! m-0!', signingOut && 'animate-pulse', className)}
+                  asChild
+                >
+                  <ShieldAlert size={22} strokeWidth={2} />
+                </Button>
               </DropdownMenuTrigger>
             </TooltipTrigger>
             <TooltipContent side="bottom" sideOffset={4}>
-              {isAuthenticated ? 'Account' : 'Sign In'}
+              {isAuthenticated ? 'Account' : 'Alert'}
             </TooltipContent>
           </Tooltip>
           <DropdownMenuContent className="w-[240px] z-[110] mr-5">
-            {isAuthenticated ? (
-              <div className="p-3">
-                <div className="flex items-center gap-2">
-                  <Avatar className="size-8 shrink-0">
-                    <AvatarImage
-                      src={currentUser?.image ?? ''}
-                      alt={currentUser?.name ?? ''}
-                      className="rounded-full"
-                    />
-                    <AvatarFallback className="rounded-full">{currentUser?.name?.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col min-w-0">
-                    <p className="font-medium text-sm leading-none truncate">{currentUser?.name}</p>
-                    <div className="flex items-center mt-0.5 gap-1">
-                      <div
-                        className={`text-xs text-muted-foreground ${showEmail ? '' : 'max-w-[160px] truncate'}`}
-                        title={currentUser?.email || ''}
-                      >
-                        {formatEmail(currentUser?.email)}
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowEmail(!showEmail);
-                        }}
-                        className="size-6 text-muted-foreground hover:text-foreground"
-                      >
-                        {showEmail ? <EyeSlash size={12} /> : <Eye size={12} />}
-                        <span className="sr-only">{showEmail ? 'Hide email' : 'Show email'}</span>
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            {/* User Info Section - commented out */}
+            {/* {isAuthenticated ? (
+              <div className="p-3"> ... </div>
             ) : (
-              <div className="p-3">
-                <div className="flex items-center gap-2">
-                  <Avatar className="size-8 shrink-0">
-                    <AvatarFallback className="rounded-full">
-                      <UserCircle size={18} />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col min-w-0">
-                    <p className="font-medium text-sm leading-none">Guest</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">Sign in to save your progress</p>
-                  </div>
-                </div>
-              </div>
-            )}
-            <DropdownMenuSeparator />
+              <div className="p-3"> ... </div>
+            )} */}
+            {/* <DropdownMenuSeparator /> */}
 
-            {/* Subscription Status - show loading or actual status */}
-            {isAuthenticated && (
-              <>
-                {isProStatusLoading ? (
-                  <div className="px-3 py-2">
-                    <div className="flex items-center gap-2.5 text-sm">
-                      <div className="size-6 rounded-md bg-muted/50 border border-border flex items-center justify-center">
-                        <div className="size-3 rounded-full bg-muted animate-pulse" />
-                      </div>
-                      <div className="flex flex-col">
-                        <div className="w-16 h-3 bg-muted rounded animate-pulse" />
-                        <div className="w-20 h-2 bg-muted/50 rounded animate-pulse mt-1" />
-                      </div>
-                    </div>
-                  </div>
-                ) : subscriptionData ? (
-                  hasActiveSubscription ? (
-                    <div className="px-3 py-2">
-                      <div className="flex items-center gap-2.5 text-sm">
-                        <div className="size-6 rounded-md bg-muted/50 border border-border flex items-center justify-center">
-                          <Crown size={14} className="text-foreground" />
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="font-medium text-foreground text-sm">Scira Pro</span>
-                          <span className="text-[10px] text-muted-foreground">Unlimited access to all features</span>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <DropdownMenuItem
-                      className="cursor-pointer flex items-center gap-2.5 py-1.5"
-                      onClick={() => router.push('/pricing')}
-                    >
-                      <div className="size-6 rounded-md bg-muted/50 border border-border flex items-center justify-center">
-                        <Lightning size={14} />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium">Upgrade to Pro</span>
-                        <span className="text-[10px] text-muted-foreground">Unlimited searches & premium models</span>
-                      </div>
-                    </DropdownMenuItem>
-                  )
-                ) : null}
-                {(subscriptionData || isProStatusLoading) && <DropdownMenuSeparator />}
-              </>
-            )}
+            {/* Subscription Status - commented out */}
+            {/* {isAuthenticated && ( ... )} */}
 
             {isAuthenticated && (
               <>
@@ -253,7 +148,8 @@ const UserProfile = memo(
               </>
             )}
 
-            <DropdownMenuItem className="cursor-pointer py-1 hover:bg-transparent!">
+            {/* Theme switcher - commented out */}
+            {/* <DropdownMenuItem className="cursor-pointer py-1 hover:bg-transparent!">
               <div className="flex items-center justify-between w-full px-0" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center gap-2">
                   <Sun size={16} />
@@ -262,7 +158,7 @@ const UserProfile = memo(
                 <ThemeSwitcher />
               </div>
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator /> */}
 
             {/* About and Information */}
             <DropdownMenuItem className="cursor-pointer" asChild>
@@ -286,7 +182,7 @@ const UserProfile = memo(
             <DropdownMenuSeparator />
 
             {/* Social and External Links */}
-            <DropdownMenuItem className="cursor-pointer" asChild>
+            {/* <DropdownMenuItem className="cursor-pointer" asChild>
               <a
                 href={'https://git.new/scira'}
                 target="_blank"
@@ -296,19 +192,17 @@ const UserProfile = memo(
                 <GithubLogo size={16} />
                 <span>Github</span>
               </a>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
             <DropdownMenuItem className="cursor-pointer" asChild>
               <a
-                href={'https://x.com/sciraai'}
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#"
                 className="w-full flex items-center gap-2"
               >
                 <XLogo size={16} />
                 <span>X.com</span>
               </a>
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer" asChild>
+            {/* <DropdownMenuItem className="cursor-pointer" asChild>
               <a
                 href={'https://www.instagram.com/scira.ai'}
                 target="_blank"
@@ -318,8 +212,8 @@ const UserProfile = memo(
                 <InstagramLogoIcon size={16} />
                 <span>Instagram</span>
               </a>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer" asChild>
+            </DropdownMenuItem> */}
+            {/* <DropdownMenuItem className="cursor-pointer" asChild>
               <a
                 href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fzaidmukaddam%2Fscira&env=XAI_API_KEY,OPENAI_API_KEY,ANTHROPIC_API_KEY,GROQ_API_KEY,GOOGLE_GENERATIVE_AI_API_KEY,DAYTONA_API_KEY,E2B_API_KEY,DATABASE_URL,BETTER_AUTH_SECRET,GITHUB_CLIENT_ID,GITHUB_CLIENT_SECRET,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,TWITTER_CLIENT_ID,TWITTER_CLIENT_SECRET,REDIS_URL,ELEVENLABS_API_KEY,TAVILY_API_KEY,EXA_API_KEY,TMDB_API_KEY,YT_ENDPOINT,FIRECRAWL_API_KEY,OPENWEATHER_API_KEY,SANDBOX_TEMPLATE_ID,GOOGLE_MAPS_API_KEY,MAPBOX_ACCESS_TOKEN,AVIATION_STACK_API_KEY,CRON_SECRET,BLOB_READ_WRITE_TOKEN,MEM0_API_KEY,MEM0_ORG_ID,MEM0_PROJECT_ID,SMITHERY_API_KEY,NEXT_PUBLIC_MAPBOX_TOKEN,NEXT_PUBLIC_POSTHOG_KEY,NEXT_PUBLIC_POSTHOG_HOST,NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,SCIRA_PUBLIC_API_KEY,NEXT_PUBLIC_SCIRA_PUBLIC_API_KEY&envDescription=API%20keys%20and%20configuration%20required%20for%20Scira%20to%20function"
                 target="_blank"
@@ -329,62 +223,50 @@ const UserProfile = memo(
                 <VercelIcon size={14} />
                 <span>Deploy with Vercel</span>
               </a>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
             <DropdownMenuItem className="cursor-pointer" asChild>
               <a
-                href={'https://scira.userjot.com'}
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#"
                 className="w-full flex items-center gap-2"
               >
                 <Bug className="size-4" />
                 <span>Feature/Bug Request</span>
               </a>
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
+            {/* <DropdownMenuSeparator /> */}
 
-            {/* Auth */}
-            {isAuthenticated ? (
-              <DropdownMenuItem
-                className="cursor-pointer w-full flex items-center justify-between gap-2"
-                onClick={() =>
-                  signOut({
-                    fetchOptions: {
-                      onRequest: () => {
-                        setSigningOut(true);
-                        toast.loading('Signing out...');
-                      },
-                      onSuccess: () => {
-                        setSigningOut(false);
-                        localStorage.clear();
-                        toast.success('Signed out successfully');
-                        toast.dismiss();
-                        window.location.href = '/new';
-                      },
-                      onError: () => {
-                        setSigningOut(false);
-                        toast.error('Failed to sign out');
-                        window.location.reload();
-                      },
-                    },
-                  })
-                }
-              >
-                <span>Sign Out</span>
-                <SignOut className="size-4" />
-              </DropdownMenuItem>
-            ) : (
-              <DropdownMenuItem
-                className="cursor-pointer w-full flex items-center justify-between gap-2"
-                onClick={() => {
-                  setSigningIn(true);
-                  redirect('/sign-in');
-                }}
-              >
-                <span>Sign In</span>
-                <SignIn className="size-4" />
-              </DropdownMenuItem>
-            )}
+            {/* Custom Section: AI Dex Explorer, LCX, Tiamonds, Buy TOTO, Swap */}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="cursor-pointer" asChild>
+              <a href="#" className="w-full flex items-center gap-2">
+                <DollarSign size={16} />
+                <span>AI Dex Explorer</span>
+              </a>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" asChild>
+              <a href="#" className="w-full flex items-center gap-2">
+                <DollarSign size={16} />
+                <span>LCX</span>
+              </a>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" asChild>
+              <a href="#" className="w-full flex items-center gap-2">
+                <DollarSign size={16} />
+                <span>Tiamonds</span>
+              </a>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" asChild>
+              <a href="#" className="w-full flex items-center gap-2">
+                <DollarSign size={16} />
+                <span>Buy TOTO</span>
+              </a>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" asChild>
+              <a href="#" className="w-full flex items-center gap-2">
+                <DollarSign size={16} />
+                <span>Swap</span>
+              </a>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </>

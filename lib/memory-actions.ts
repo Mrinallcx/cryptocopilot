@@ -29,6 +29,13 @@ export interface MemoryResponse {
   total: number;
 }
 
+if (!serverEnv.MEM0_API_KEY) {
+  // Export dummy memory actions
+  export const addMemory = async () => null;
+  export const searchMemories = async () => [];
+  export const getAllMemories = async () => [];
+  export const getMemoryById = async () => null;
+} else {
 /**
  * Add a memory for the authenticated user
  */
@@ -215,5 +222,6 @@ export async function deleteMemory(memoryId: string) {
   } catch (error) {
     console.error('Error deleting memory:', error);
     throw error;
+    }
   }
 } 

@@ -47,6 +47,8 @@ import { auth } from '@/lib/auth';
 import { v4 as uuidv4 } from 'uuid';
 import { geolocation } from '@vercel/functions';
 import { getTweet } from 'react-tweet/api';
+import { getOrderBook, getTicker, getTrades, getPairs, findExactPair, getTickers } from '@/lib/lcx';
+import { getBinanceTicker, getBinanceOrderBook, getBinanceTrades, getBinanceKlines, getBinanceExchangeInfo } from '@/lib/binance';
 
 type ResponseMessageWithoutId = CoreToolMessage | CoreAssistantMessage;
 type ResponseMessage = ResponseMessageWithoutId & { id: string };
@@ -59,24 +61,9 @@ function getTrailingMessageId({ messages }: { messages: Array<ResponseMessage> }
   return trailingMessage.id;
 }
 
-let globalStreamContext: ResumableStreamContext | null = null;
-
+// Disable resumable stream context and Redis usage
 function getStreamContext() {
-  if (!globalStreamContext) {
-    try {
-      globalStreamContext = createResumableStreamContext({
-        waitUntil: after,
-      });
-    } catch (error: any) {
-      if (error.message.includes('REDIS_URL')) {
-        console.log(' > Resumable streams are disabled due to missing REDIS_URL');
-      } else {
-        console.error(error);
-      }
-    }
-  }
-
-  return globalStreamContext;
+  return null;
 }
 
 const CURRENCY_SYMBOLS = {
@@ -2210,7 +2197,7 @@ print(f"Converted amount: {converted_amount}")
                 const response = await fetch(url, {
                   headers: {
                     'Accept': 'application/json',
-                    'x-cg-demo-api-key': serverEnv.COINGECKO_API_KEY,
+                    ...(serverEnv.COINGECKO_API_KEY && { 'x-cg-demo-api-key': serverEnv.COINGECKO_API_KEY }),
                   },
                 });
 
@@ -2282,7 +2269,7 @@ print(f"Converted amount: {converted_amount}")
                 const response = await fetch(url, {
                   headers: {
                     'Accept': 'application/json',
-                    'x-cg-demo-api-key': serverEnv.COINGECKO_API_KEY,
+                    ...(serverEnv.COINGECKO_API_KEY && { 'x-cg-demo-api-key': serverEnv.COINGECKO_API_KEY }),
                   },
                 });
 
@@ -2635,13 +2622,13 @@ print(f"Converted amount: {converted_amount}")
                   fetch(`https://api.coingecko.com/api/v3/coins/${coinId}/ohlc?vs_currency=${vsCurrency}&days=${days}`, {
                     headers: {
                       'Accept': 'application/json',
-                      'x-cg-demo-api-key': serverEnv.COINGECKO_API_KEY,
+                      ...(serverEnv.COINGECKO_API_KEY && { 'x-cg-demo-api-key': serverEnv.COINGECKO_API_KEY }),
                     },
                   }),
                   fetch(`https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=false`, {
                     headers: {
                       'Accept': 'application/json',
-                      'x-cg-demo-api-key': serverEnv.COINGECKO_API_KEY,
+                      ...(serverEnv.COINGECKO_API_KEY && { 'x-cg-demo-api-key': serverEnv.COINGECKO_API_KEY }),
                     },
                   })
                 ]);
@@ -2694,6 +2681,277 @@ print(f"Converted amount: {converted_amount}")
                   success: false,
                   error: error instanceof Error ? error.message : 'Unknown error occurred',
                   coinId,
+                };
+              }
+            },
+          }),
+          lcx_search: tool({
+            description: 'Search LCX crypto exchange for market data, order books, trades, and trading pairs.',
+            parameters: z.object({
+              query: z.string().describe('The search query for LCX data (e.g., "BTC/USDT order book", "LCX/EUR price", "get all pairs", "multiple tickers")'),
+            }),
+            execute: async ({ query }: { query: string }) => {
+              console.log('LCX Search Query:', query);
+              
+              try {
+                // Parse the query to determine what type of data to fetch
+                const lowerQuery = query.toLowerCase();
+                
+                if (lowerQuery.includes('order book') || lowerQuery.includes('orderbook')) {
+                  // Extract trading pair from query
+                  const pairMatch = query.match(/([A-Z]{3,4}\/[A-Z]{3,4})/i);
+                  if (pairMatch) {
+                    const userPair = pairMatch[1].toUpperCase();
+                    const exactPair = await findExactPair(userPair);
+                    
+                    if (exactPair) {
+                      const orderBook = await getOrderBook(exactPair);
+                      return {
+                        success: true,
+                        type: 'order_book',
+                        pair: exactPair,
+                        data: orderBook,
+                        source: 'LCX Exchange API',
+                      };
+                    } else {
+                      return {
+                        success: false,
+                        error: `Pair "${userPair}" not found. Please check available pairs.`,
+                        query,
+                        suggestion: 'Try querying "get all pairs" to see available trading pairs.',
+                      };
+                    }
+                  }
+                }
+                
+                if (lowerQuery.includes('price') || lowerQuery.includes('ticker')) {
+                  // Check if it's a request for multiple tickers
+                  if (lowerQuery.includes('multiple') || lowerQuery.includes('all tickers') || lowerQuery.includes('tickers')) {
+                    // Get popular pairs for bulk ticker request
+                    const popularPairs = ['LCX/EUR', 'BTC/USDT', 'ETH/USDT', 'LCX/USDT'];
+                    const tickers = await getTickers(popularPairs);
+                    return {
+                      success: true,
+                      type: 'multiple_tickers',
+                      data: tickers,
+                      source: 'LCX Exchange API',
+                    };
+                  }
+                  
+                  // Extract trading pair from query
+                  const pairMatch = query.match(/([A-Z]{3,4}\/[A-Z]{3,4})/i);
+                  if (pairMatch) {
+                    const userPair = pairMatch[1].toUpperCase();
+                    const exactPair = await findExactPair(userPair);
+                    
+                    if (exactPair) {
+                      const ticker = await getTicker(exactPair);
+                      return {
+                        success: true,
+                        type: 'ticker',
+                        pair: exactPair,
+                        data: ticker,
+                        source: 'LCX Exchange API',
+                      };
+                    } else {
+                      return {
+                        success: false,
+                        error: `Pair "${userPair}" not found. Please check available pairs.`,
+                        query,
+                        suggestion: 'Try querying "get all pairs" to see available trading pairs.',
+                      };
+                    }
+                  }
+                }
+                
+                if (lowerQuery.includes('trades') || lowerQuery.includes('recent trades')) {
+                  // Extract trading pair from query
+                  const pairMatch = query.match(/([A-Z]{3,4}\/[A-Z]{3,4})/i);
+                  if (pairMatch) {
+                    const userPair = pairMatch[1].toUpperCase();
+                    const exactPair = await findExactPair(userPair);
+                    
+                    if (exactPair) {
+                      const trades = await getTrades(exactPair);
+                      return {
+                        success: true,
+                        type: 'trades',
+                        pair: exactPair,
+                        data: trades,
+                        source: 'LCX Exchange API',
+                      };
+                    } else {
+                      return {
+                        success: false,
+                        error: `Pair "${userPair}" not found. Please check available pairs.`,
+                        query,
+                        suggestion: 'Try querying "get all pairs" to see available trading pairs.',
+                      };
+                    }
+                  }
+                }
+                
+                if (lowerQuery.includes('pairs') || lowerQuery.includes('all pairs') || lowerQuery.includes('available pairs')) {
+                  const pairs = await getPairs();
+                  return {
+                    success: true,
+                    type: 'pairs',
+                    data: pairs,
+                    source: 'LCX Exchange API',
+                  };
+                }
+                
+                // Default: try to get ticker for any mentioned pair
+                const pairMatch = query.match(/([A-Z]{3,4}\/[A-Z]{3,4})/i);
+                if (pairMatch) {
+                  const userPair = pairMatch[1].toUpperCase();
+                  const exactPair = await findExactPair(userPair);
+                  
+                  if (exactPair) {
+                    const ticker = await getTicker(exactPair);
+                    return {
+                      success: true,
+                      type: 'ticker',
+                      pair: exactPair,
+                      data: ticker,
+                      source: 'LCX Exchange API',
+                    };
+                  } else {
+                    return {
+                      success: false,
+                      error: `Pair "${userPair}" not found. Please check available pairs.`,
+                      query,
+                      suggestion: 'Try querying "get all pairs" to see available trading pairs.',
+                    };
+                  }
+                }
+                
+                // If no specific pair found, return available pairs
+                const pairs = await getPairs();
+                return {
+                  success: true,
+                  type: 'pairs',
+                  message: 'No specific trading pair found in query. Here are available pairs:',
+                  data: pairs,
+                  source: 'LCX Exchange API',
+                };
+                
+              } catch (error) {
+                console.error('LCX search error:', error);
+                return {
+                  success: false,
+                  error: error instanceof Error ? error.message : 'Unknown error occurred',
+                  query,
+                };
+              }
+            },
+          }),
+          binance_search: tool({
+            description: 'Search Binance crypto exchange for market data, order books, trades, and trading pairs.',
+            parameters: z.object({
+              query: z.string().describe('The search query for Binance data (e.g., "BTCUSDT price", "ETHUSDT order book", "get all pairs")'),
+            }),
+            execute: async ({ query }: { query: string }) => {
+              console.log('Binance Search Query:', query);
+              try {
+                const lowerQuery = query.toLowerCase();
+                // Handle different query types
+                if (lowerQuery.includes('order book') || lowerQuery.includes('orderbook')) {
+                  const symbolMatch = query.match(/([A-Z0-9]{3,10}USDT|[A-Z0-9]{3,10}BUSD|[A-Z0-9]{3,10}BNB)/i);
+                  if (symbolMatch) {
+                    const symbol = symbolMatch[1].toUpperCase();
+                    const orderBook = await getBinanceOrderBook(symbol);
+                    return {
+                      success: true,
+                      type: 'order_book',
+                      symbol,
+                      data: orderBook,
+                      source: 'Binance API',
+                    };
+                  }
+                }
+                if (lowerQuery.includes('price') || lowerQuery.includes('ticker')) {
+                  const symbolMatch = query.match(/([A-Z0-9]{3,10}USDT|[A-Z0-9]{3,10}BUSD|[A-Z0-9]{3,10}BNB)/i);
+                  if (symbolMatch) {
+                    const symbol = symbolMatch[1].toUpperCase();
+                    const ticker = await getBinanceTicker(symbol);
+                    return {
+                      success: true,
+                      type: 'ticker',
+                      symbol,
+                      data: ticker,
+                      source: 'Binance API',
+                    };
+                  } else {
+                    // No symbol found, return a short error and a few examples
+                    return {
+                      success: false,
+                      error: 'No valid trading pair found in your query. Please specify a symbol like BTCUSDT, ETHUSDT, or BNBUSDT.',
+                      examples: ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'ADAUSDT'],
+                      source: 'Binance API',
+                    };
+                  }
+                }
+                if (lowerQuery.includes('trades') || lowerQuery.includes('recent trades')) {
+                  const symbolMatch = query.match(/([A-Z0-9]{3,10}USDT|[A-Z0-9]{3,10}BUSD|[A-Z0-9]{3,10}BNB)/i);
+                  if (symbolMatch) {
+                    const symbol = symbolMatch[1].toUpperCase();
+                    const trades = await getBinanceTrades(symbol);
+                    return {
+                      success: true,
+                      type: 'trades',
+                      symbol,
+                      data: trades,
+                      source: 'Binance API',
+                    };
+                  }
+                }
+                if (lowerQuery.includes('pairs') || lowerQuery.includes('all pairs') || lowerQuery.includes('available pairs')) {
+                  const exchangeInfo = await getBinanceExchangeInfo();
+                  const pairs = (exchangeInfo.symbols as any[]).slice(0, 10).map((s: any) => ({
+                    symbol: s.symbol,
+                    baseAsset: s.baseAsset,
+                    quoteAsset: s.quoteAsset,
+                    status: s.status,
+                  }));
+                  return {
+                    success: true,
+                    type: 'pairs',
+                    data: {
+                      pairs,
+                      total: exchangeInfo.symbols.length,
+                      note: 'Showing first 10 pairs. Ask for a specific pair for more details.'
+                    },
+                    source: 'Binance API',
+                  };
+                }
+                // Default: try to get ticker for any mentioned symbol
+                const symbolMatch = query.match(/([A-Z0-9]{3,10}USDT|[A-Z0-9]{3,10}BUSD|[A-Z0-9]{3,10}BNB)/i);
+                if (symbolMatch) {
+                  const symbol = symbolMatch[1].toUpperCase();
+                  const ticker = await getBinanceTicker(symbol);
+                  return {
+                    success: true,
+                    type: 'ticker',
+                    symbol,
+                    data: ticker,
+                    source: 'Binance API',
+                  };
+                } else {
+                  // No symbol found, return a short error and a few examples
+                  return {
+                    success: false,
+                    error: 'No valid trading pair found in your query. Please specify a symbol like BTCUSDT, ETHUSDT, or BNBUSDT.',
+                    examples: ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'ADAUSDT'],
+                    source: 'Binance API',
+                  };
+                }
+              } catch (error) {
+                console.error('Binance search error:', error);
+                return {
+                  success: false,
+                  error: error instanceof Error ? error.message : 'Unknown error occurred',
+                  query,
                 };
               }
             },
