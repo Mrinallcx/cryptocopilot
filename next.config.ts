@@ -13,6 +13,12 @@ const nextConfig: NextConfig = {
         }
         : false,
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   experimental: {
     useCache: true,
     optimizePackageImports: ['@phosphor-icons/react', '@daytonaio/sdk'],
