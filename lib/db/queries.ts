@@ -20,10 +20,21 @@ import { serverEnv } from '@/env/server';
 
 type VisibilityType = 'public' | 'private';
 
-const client = postgres(serverEnv.DATABASE_URL!);
-const db = drizzle(client);
+let db: any = null;
+if (
+  serverEnv.DATABASE_URL &&
+  (serverEnv.DATABASE_URL.startsWith('postgres://') || serverEnv.DATABASE_URL.startsWith('postgresql://'))
+) {
+  const client = postgres(serverEnv.DATABASE_URL);
+  db = drizzle(client);
+}
+
+function ensureDb() {
+  if (!db) throw new ChatSDKError('bad_request:database', 'Database is not configured.');
+}
 
 export async function getUser(email: string): Promise<Array<User>> {
+  ensureDb();
   try {
     return await db.select().from(user).where(eq(user.email, email));
   } catch (error) {
@@ -436,3 +447,5 @@ export async function getMessageCount({ userId }: { userId: string }): Promise<n
     return 0;
   }
 }
+
+export { db };

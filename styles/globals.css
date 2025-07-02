@@ -1,0 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap');
+@import '@geist-ui/font/geist.css';
+
+html, body {
+  background-color: #efebfe !important;
+  font-family: 'Syne', 'Geist', sans-serif;
+} 

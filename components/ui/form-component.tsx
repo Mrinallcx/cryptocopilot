@@ -1875,7 +1875,8 @@ const FormComponent: React.FC<FormComponentProps> = ({
                     />
                   </div>
 
-                  <div className={cn('transition-all duration-300 flex-shrink-0', 'opacity-100 visible w-auto')}>
+                  {/* Commenting out the Extreme search button and tooltip in the chat input toolbar */}
+                  {/* <div className={cn('transition-all duration-300 flex-shrink-0', 'opacity-100 visible w-auto')}>
                     <Tooltip delayDuration={300}>
                       <TooltipTrigger asChild>
                         <button
@@ -1913,7 +1914,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
                         </div>
                       </TooltipContent>
                     </Tooltip>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className={cn('flex items-center flex-shrink-0 gap-2')}>
@@ -1975,42 +1976,7 @@ const FormComponent: React.FC<FormComponentProps> = ({
                       </TooltipContent>
                     </Tooltip>
                   ) : input.length === 0 && attachments.length === 0 ? (
-                    /* Show Voice Recording Button when no input */
-                    <Tooltip delayDuration={300}>
-                      <TooltipTrigger asChild>
-                        <button
-                          className={cn(
-                            'group rounded-full p-2 h-8 w-8 backdrop-blur-2xl transition-all duration-200',
-                            isRecording
-                              ? 'border border-red-600 bg-gradient-to-b from-red-400 via-red-500 to-red-600 text-white shadow-[inset_0_1px_0px_0px_#fca5a5] hover:from-red-600 hover:via-red-600 hover:to-red-600 active:[box-shadow:none]'
-                              : 'border border-zinc-600 bg-gradient-to-b from-zinc-400 via-zinc-500 to-zinc-600 text-neutral-50 shadow-[inset_0_1px_0px_0px_#a1a1aa] hover:from-zinc-600 hover:via-zinc-600 hover:to-zinc-600 active:[box-shadow:none]',
-                          )}
-                          onClick={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            handleRecord();
-                          }}
-                        >
-                          <span className="block group-active:[transform:translate3d(0,1px,0)]">
-                            <MicrophoneIcon size={14} />
-                          </span>
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent
-                        side="bottom"
-                        sideOffset={6}
-                        className=" border-0 shadow-lg backdrop-blur-xs py-2 px-3"
-                      >
-                        <div className="flex flex-col gap-0.5">
-                          <span className="font-medium text-[11px]">
-                            {isRecording ? 'Stop Recording' : 'Voice Input'}
-                          </span>
-                          <span className="text-[10px] text-neutral-300 dark:text-neutral-600 leading-tight">
-                            {isRecording ? 'Click to stop recording' : 'Record your voice message'}
-                          </span>
-                        </div>
-                      </TooltipContent>
-                    </Tooltip>
+                    <></>
                   ) : (
                     /* Show Send Button when there is input */
                     <Tooltip delayDuration={300}>

@@ -78,7 +78,7 @@ const Navbar = memo(
 
       if (!chatId) return;
 
-      const url = `https://scira.ai/search/${chatId}`;
+      const url = `https://bharatx.ai/search/${chatId}`;
       navigator.clipboard.writeText(url);
       setCopied(true);
       toast.success('Link copied to clipboard');
@@ -87,7 +87,7 @@ const Navbar = memo(
     };
 
     // Generate the share URL
-    const shareUrl = chatId ? `https://scira.ai/search/${chatId}` : '';
+    const shareUrl = chatId ? `https://bharatx.ai/search/${chatId}` : '';
 
     // Social media share handlers
     const handleShareLinkedIn = (e: React.MouseEvent) => {
@@ -447,7 +447,7 @@ const Navbar = memo(
           )}
 
           {/* Chat History Button */}
-          <ChatHistoryButton onClick={onHistoryClick} />
+          {/* <ChatHistoryButton onClick={onHistoryClick} /> */}
 
           {/* Memoized UserProfile component */}
           <UserProfile

@@ -13,34 +13,34 @@ import { Toaster } from 'sonner';
 import { Providers } from './providers';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://scira.ai'),
+  metadataBase: new URL('https://bharatx.ai'),
   title: {
-    default: 'Scira AI',
-    template: '%s | Scira AI',
-    absolute: 'Scira AI',
+    default: 'BharatX',
+    template: '%s | BharatX',
+    absolute: 'BharatX',
   },
-  description: 'Scira AI is a minimalistic AI-powered search engine that helps you find information on the internet.',
+  description: 'BharatX is a modern crypto finance copilot for India, empowering smart investors and traders.',
   openGraph: {
-    url: 'https://scira.ai',
-    siteName: 'Scira AI',
+    url: 'https://bharatx.ai',
+    siteName: 'BharatX',
   },
   keywords: [
-    'scira.ai',
+    'bharatx.ai',
     'ai search engine',
-    'scira ai',
-    'Scira AI',
-    'scira AI',
-    'SCIRA.AI',
-    'scira github',
+    'bharatx ai',
+    'BharatX',
+    'bharatx AI',
+    'BHARATX.AI',
+    'bharatx github',
     'ai search engine',
-    'Scira',
-    'scira',
-    'scira.app',
-    'scira ai',
-    'scira ai app',
-    'scira',
+    'BharatX',
+    'bharatx',
+    'bharatx.app',
+    'bharatx ai',
+    'bharatx ai app',
+    'bharatx',
     'MiniPerplx',
-    'Scira AI',
+    'BharatX',
     'Perplexity alternatives',
     'Perplexity AI alternatives',
     'open source ai search engine',
@@ -49,12 +49,12 @@ export const metadata: Metadata = {
     'ai search',
     'minimal ai search',
     'minimal ai search alternatives',
-    'Scira (Formerly MiniPerplx)',
+    'BharatX (Formerly MiniPerplx)',
     'AI Search Engine',
     'mplx.run',
     'mplx ai',
     'zaid mukaddam',
-    'scira.how',
+    'bharatx.how',
     'search engine',
     'AI',
     'perplexity',
@@ -94,7 +94,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning data-theme="light">
       <body className={`${geist.variable} ${beVietnamPro.variable} font-sans antialiased`} suppressHydrationWarning>
         <NuqsAdapter>
           <Providers>

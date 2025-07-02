@@ -30,7 +30,9 @@ const polarClient = new Polar({
     ...(process.env.NODE_ENV === 'production' ? {} : { server: 'sandbox' }),
 });
 
-export const auth = betterAuth({
+let auth = null;
+if (serverEnv.BETTER_AUTH_SECRET && db) {
+    auth = betterAuth({
     cookieCache: {
         enabled: true,
         maxAge: 5 * 60,
@@ -197,3 +199,13 @@ export const auth = betterAuth({
     trustedOrigins: ["https://localhost:3000", "https://scira.ai", "https://www.scira.ai"],
     allowedOrigins: ["https://localhost:3000", "https://scira.ai", "https://www.scira.ai"],
 });
+} else {
+    auth = {
+        api: {
+            getSession: async () => null,
+        },
+        // Add other dummy methods as needed
+    };
+}
+
+export { auth };
