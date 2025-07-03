@@ -48,7 +48,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { geolocation } from '@vercel/functions';
 import { getTweet } from 'react-tweet/api';
 import { getOrderBook, getTicker, getTrades, getPairs, findExactPair, getTickers } from '@/lib/lcx';
-import { getBinanceTicker, getBinanceOrderBook, getBinanceTrades, getBinanceKlines, getBinanceExchangeInfo } from '@/lib/binance';
+import { getBinanceTicker, getBinanceOrderBook, getBinanceTrades, getBinanceKlines, getBinanceExchangeInfo, testBinanceConnectivity } from '@/lib/binance';
 
 type ResponseMessageWithoutId = CoreToolMessage | CoreAssistantMessage;
 type ResponseMessage = ResponseMessageWithoutId & { id: string };
@@ -3119,6 +3119,15 @@ print(f"Converted amount: {converted_amount}")
 }
 
 export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const test = searchParams.get('test');
+  
+  if (test === 'binance') {
+    console.log('Running Binance connectivity test...');
+    await testBinanceConnectivity();
+    return new Response('Connectivity test completed. Check server logs.', { status: 200 });
+  }
+  
   const streamContext = getStreamContext();
   const resumeRequestedAt = new Date();
 
@@ -3126,7 +3135,6 @@ export async function GET(request: Request) {
     return new Response(null, { status: 204 });
   }
 
-  const { searchParams } = new URL(request.url);
   const chatId = searchParams.get('chatId');
 
   if (!chatId) {
