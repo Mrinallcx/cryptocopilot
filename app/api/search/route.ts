@@ -2875,12 +2875,18 @@ print(f"Converted amount: {converted_amount}")
                   if (symbolMatch) {
                     const symbol = symbolMatch[1].toUpperCase();
                     const ticker = await getBinanceTicker(symbol);
+                    
+                    // Check if we got fallback data
+                    const source = ticker.source || 'Binance API';
+                    const isFallback = source.includes('Fallback') || source.includes('CoinGecko');
+                    
                     return {
                       success: true,
                       type: 'ticker',
                       symbol,
                       data: ticker,
-                      source: 'Binance API',
+                      source: source,
+                      note: isFallback ? 'Data provided via fallback API due to Binance API restrictions in this region.' : undefined,
                     };
                   } else {
                     // No symbol found, return a short error and a few examples
@@ -2914,15 +2920,21 @@ print(f"Converted amount: {converted_amount}")
                     quoteAsset: s.quoteAsset,
                     status: s.status,
                   }));
+                  
+                  // Check if we got fallback data
+                  const source = exchangeInfo.source || 'Binance API';
+                  const isFallback = source.includes('Fallback');
+                  
                   return {
                     success: true,
                     type: 'pairs',
                     data: {
                       pairs,
                       total: exchangeInfo.symbols.length,
-                      note: 'Showing first 10 pairs. Ask for a specific pair for more details.'
+                      note: isFallback ? 'Showing fallback pairs due to Binance API restrictions. Ask for a specific pair for more details.' : 'Showing first 10 pairs. Ask for a specific pair for more details.'
                     },
-                    source: 'Binance API',
+                    source: source,
+                    note: isFallback ? 'Data provided via fallback API due to Binance API restrictions in this region.' : undefined,
                   };
                 }
                 // Default: try to get ticker for any mentioned symbol
