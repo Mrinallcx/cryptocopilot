@@ -96,6 +96,7 @@ export const searchGroups = [
     icon: DollarSign,
     show: true,
   },
+
 ] as const;
 
 export type SearchGroup = typeof searchGroups[number];

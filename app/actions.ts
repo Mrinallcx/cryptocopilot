@@ -217,6 +217,7 @@ const groupTools = {
   buddy: ['memory_manager', 'datetime'] as const,
   lcx: ['lcx_search', 'datetime'] as const,
   binance: ['binance_search', 'datetime'] as const,
+
 } as const;
 
 const groupInstructions = {
@@ -1065,6 +1066,8 @@ const groupInstructions = {
   - Do NOT use bullet points or numbered lists under any circumstances
   - Do NOT use heading level 1 (h1) in your markdown formatting
   - Do NOT include generic market commentary without specific data support`,
+
+
 };
 
 export async function getGroupConfig(groupId: LegacyGroupId = 'web') {
