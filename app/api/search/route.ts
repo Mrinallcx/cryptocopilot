@@ -50,6 +50,7 @@ import { getTweet } from 'react-tweet/api';
 import { getOrderBook, getTicker, getTrades, getPairs, findExactPair, getTickers } from '@/lib/lcx';
 import { getBinanceTicker, getBinanceOrderBook, getBinanceTrades, getBinanceKlines, getBinanceExchangeInfo, testBinanceConnectivity } from '@/lib/binance';
 
+
 type ResponseMessageWithoutId = CoreToolMessage | CoreAssistantMessage;
 type ResponseMessage = ResponseMessageWithoutId & { id: string };
 
@@ -2968,6 +2969,7 @@ print(f"Converted amount: {converted_amount}")
               }
             },
           }),
+
         },
         experimental_repairToolCall: async ({ toolCall, tools, parameterSchema, error }) => {
           if (NoSuchToolError.isInstance(error)) {
@@ -3124,8 +3126,13 @@ export async function GET(request: Request) {
   
   if (test === 'binance') {
     console.log('Running Binance connectivity test...');
-    await testBinanceConnectivity();
-    return new Response('Connectivity test completed. Check server logs.', { status: 200 });
+    try {
+      await testBinanceConnectivity();
+      return new Response('Connectivity test completed. Check server logs.', { status: 200 });
+    } catch (error) {
+      console.error('Connectivity test failed:', error);
+      return new Response(`Connectivity test failed: ${error instanceof Error ? error.message : 'Unknown error'}`, { status: 500 });
+    }
   }
   
   const streamContext = getStreamContext();
