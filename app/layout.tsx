@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     'AI Search Engine',
     'mplx.run',
     'mplx ai',
-    'zaid mukaddam',
+    'mrinal',
     'bharatx.how',
     'search engine',
     'AI',

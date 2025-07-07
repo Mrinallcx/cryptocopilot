@@ -965,12 +965,12 @@ export default function AboutPage() {
                 <div className="flex-1 space-y-2 text-center sm:text-left">
                   <h3 className="font-medium text-base">Student Discount: $10 off Pro Plan</h3>
                   <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                    Students can get the Pro plan for just $5/month. Email zaid@scira.ai with your student ID and a
+                    Students can get the Pro plan for just $5/month. Email mrinal@bharatx.ai with your student ID and a
                     brief description of how you use Scira for your studies.
                   </p>
                   <div className="pt-1">
                     <a
-                      href="mailto:zaid@scira.ai?subject=Student%20Discount%20Request"
+                      href="mailto:mrinal@bharatx.ai?subject=Student%20Discount%20Request"
                       className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-zinc-300 dark:border-zinc-700 bg-background hover:bg-zinc-100 dark:hover:bg-zinc-800 h-9 px-4 py-2"
                     >
                       Request Student Discount
@@ -1056,7 +1056,7 @@ export default function AboutPage() {
                 <ProAccordionTrigger>Is there a student discount?</ProAccordionTrigger>
                 <ProAccordionContent>
                   Yes, students can get $10 off the Pro plan, bringing it down to $5/month. To apply, email
-                  zaid@scira.ai with your student verification details and a brief description of how you use Scira for
+                  mrinal@bharatx.ai with your student verification details and a brief description of how you use BharatX for
                   your academic work or studies.
                 </ProAccordionContent>
               </ProAccordionItem>
@@ -1088,7 +1088,7 @@ export default function AboutPage() {
               <ProAccordionItem value="item-7">
                 <ProAccordionTrigger>How do I apply for the student discount?</ProAccordionTrigger>
                 <ProAccordionContent>
-                  Email zaid@scira.ai with a copy of your student ID or enrollment proof. In your email, include a brief
+                  Email mrinal@bharatx.ai with a copy of your student ID or enrollment proof. In your email, include a brief
                   description of how you use or plan to use Scira for your academic work or studies. Once verified,
                   you&apos;ll receive a special discount code for $10 off the Pro plan.
                 </ProAccordionContent>
@@ -1099,7 +1099,7 @@ export default function AboutPage() {
               <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
                 Have more questions?{' '}
                 <a
-                  href="mailto:zaid@scira.ai"
+                                        href="mailto:mrinal@bharatx.ai"
                   className="text-black dark:text-white hover:underline underline-offset-4 decoration-zinc-400 dark:decoration-zinc-600 transition-colors duration-200"
                 >
                   Get in touch

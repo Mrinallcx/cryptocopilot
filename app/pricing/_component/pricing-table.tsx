@@ -440,7 +440,7 @@ export default function PricingTable({ subscriptionDetails }: PricingTableProps)
           <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
             Have questions?{' '}
             <a
-              href="mailto:zaid@scira.ai"
+                                  href="mailto:mrinal@bharatx.ai"
               className="text-black dark:text-white hover:underline underline-offset-4 decoration-zinc-400 dark:decoration-zinc-600 transition-colors duration-200"
             >
               Get in touch

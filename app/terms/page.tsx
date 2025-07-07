@@ -223,8 +223,8 @@ export default function TermsPage() {
           <h2>14. Contact Us</h2>
           <p>If you have any questions about these Terms of Service, please contact us at:</p>
           <p>
-            <a href="mailto:zaid@scira.ai" className="flex items-center gap-1">
-              zaid@scira.ai <ExternalLink className="h-4 w-4" />
+            <a href="mailto:mrinal@bharatx.ai" className="flex items-center gap-1">
+              mrinal@bharatx.ai <ExternalLink className="h-4 w-4" />
             </a>
           </p>
 
@@ -258,7 +258,7 @@ export default function TermsPage() {
                 />
               </div>
               <div className="text-sm text-neutral-500 dark:text-neutral-400">
-                © {new Date().getFullYear()} Scira AI by Zaid Mukaddam
+                © {new Date().getFullYear()} BharatX AI by Mrinal
               </div>
             </div>
             <div className="flex items-center gap-6 text-sm text-neutral-500 dark:text-neutral-400">

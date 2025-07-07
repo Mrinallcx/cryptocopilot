@@ -68,7 +68,7 @@ export default function PrivacyPage() {
       <div className="py-16 px-4">
         <div className="container max-w-3xl mx-auto prose dark:prose-invert prose-neutral prose-headings:font-be-vietnam-pro prose-p:text-neutral-600 dark:prose-p:text-neutral-400 prose-a:text-neutral-900 dark:prose-a:text-neutral-200 prose-a:no-underline hover:prose-a:text-black dark:hover:prose-a:text-white prose-headings:tracking-tight">
           <p className="text-lg">
-            At Scira AI, we respect your privacy and are committed to protecting your personal data. This Privacy Policy
+            At BharatX AI, we respect your privacy and are committed to protecting your personal data. This Privacy Policy
             explains how we collect, use, and safeguard your information when you use our AI-powered search engine.
           </p>
 
@@ -160,14 +160,14 @@ export default function PrivacyPage() {
           <h2>Contact Us</h2>
           <p>If you have any questions about this Privacy Policy, please contact us at:</p>
           <p>
-            <a href="mailto:zaid@scira.ai" className="flex items-center gap-1">
-              zaid@scira.ai <ExternalLink className="h-4 w-4" />
+            <a href="mailto:mrinal@bharatx.ai" className="flex items-center gap-1">
+              mrinal@bharatx.ai <ExternalLink className="h-4 w-4" />
             </a>
           </p>
 
           <div className="my-8 border-t border-neutral-200 dark:border-neutral-800 pt-8">
             <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              By using Scira AI, you agree to our Privacy Policy and our{' '}
+              By using BharatX AI, you agree to our Privacy Policy and our{' '}
               <Link href="/terms" className="underline">
                 Terms of Service
               </Link>
@@ -195,7 +195,7 @@ export default function PrivacyPage() {
                 />
               </div>
               <div className="text-sm text-neutral-500 dark:text-neutral-400">
-                © {new Date().getFullYear()} Scira AI by Zaid Mukaddam
+                © {new Date().getFullYear()} BharatX AI by Mrinal
               </div>
             </div>
             <div className="flex items-center gap-6 text-sm text-neutral-500 dark:text-neutral-400">
